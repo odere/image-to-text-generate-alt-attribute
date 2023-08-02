@@ -1,0 +1,99 @@
+/* Hide everything above this component. */
+#smui-app,
+body,
+html {
+	display: block !important;
+	height: auto !important;
+	width: auto !important;
+	position: static !important;
+	margin: 0;
+}
+
+body {
+	max-height: 100vh;
+	overflow: hidden;
+}
+
+#app {
+	.mdc-top-app-bar__row {
+		height: var(--navigation-header-height);
+		max-width: 1280px;
+		margin: 0 auto;
+	}
+
+	.card-media-square {
+		width: auto;
+		display: inherit;
+		margin: var(--gap) 0;
+	}
+
+	.relative-container {
+		position: relative;
+	}
+
+	.full-width {
+		width: 100%;
+	}
+
+	.mdc-data-table__table-container {
+		max-height: calc(
+			100vh - var(--navigation-header-height) - var(--table-controls-height) - (var(--gap) * 8)
+		);
+		overflow: auto;
+	}
+
+	.mdc-image-list__image {
+		width: unset;
+	}
+
+	.table-controls__pagination {
+		border: none;
+	}
+
+	.hidden {
+		visibility: hidden;
+	}
+
+	.filter-input {
+		flex-basis: 30%;
+		height: 36px;
+		display: flex;
+		align-items: center;
+	}
+
+	.container-max-width {
+		max-width: 1280px;
+		margin: 0 auto;
+	}
+
+	.page-container {
+		background-color: var(--background);
+		padding: calc(var(--gap) * 4);
+		padding-top: calc(var(--navigation-header-height) + calc(var(--gap) * 4));
+	}
+
+	.mdc-data-table__row {
+		// Expected height with thumbnail
+		height: 73px;
+	}
+
+	.mdc-top-app-bar--fixed {
+		top: 0;
+		margin: 0;
+	}
+
+	.mdc-snackbar--stacked {
+		.mdc-snackbar__surface {
+			flex-direction: row;
+		}
+
+		.mdc-snackbar__actions {
+			margin: calc(var(--gap) * 2) 0;
+		}
+	}
+
+	.navigation-toolbar {
+		display: flex;
+		gap: calc(var(--gap) * 4);
+	}
+}
