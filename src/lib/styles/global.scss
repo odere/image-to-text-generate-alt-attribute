@@ -22,6 +22,17 @@ html {
 	margin: 0;
 }
 
+td {
+	white-space: pre-line;
+}
+
+.long-text-cell {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100px;
+}
+
 .content-max-width {
 	margin: 0 auto;
 	max-width: var(--desktop-breakpoint);
@@ -53,22 +64,11 @@ html {
 	.header-toolbar-section {
 		display: flex;
 		gap: var(--gap-medium);
+		padding-right: var(--gap-medium);
 	}
 }
 
 .image-to-description-table {
-	.mdc-data-table__row {
-		// Expected height with thumbnail
-		height: 73px;
-	}
-
-	.mdc-data-table__table-container {
-		max-height: calc(
-			100vh - var(--navigation-header-height) - var(--table-controls-height) - var(--gap-large)
-		);
-		overflow: auto;
-	}
-
 	.image-to-description-table-pagination {
 		border: none;
 	}
@@ -82,14 +82,70 @@ html {
 }
 
 @media (max-width: calc($mobileBreakpoint - 1px)) {
+	.pagination-selector {
+		display: none;
+	}
+
+	.image-to-description-table-pagination {
+		justify-content: space-around;
+	}
+
+	table {
+		font-size: 0.5em;
+	}
+
+	.mdc-data-table__cell,
+	.mdc-data-table__header-cell {
+		padding: 0 var(--gap);
+	}
 }
 
 @media (min-width: $mobileBreakpoint) and (max-width: calc($tabletBreakpoint - 1px)) {
+	.pagination-selector {
+		display: block;
+	}
+
+	.image-to-description-table-pagination {
+		justify-content: flex-end;
+	}
+
+	table {
+		font-size: 0.75em;
+	}
+
+	.mdc-data-table__cell,
+	.mdc-data-table__header-cell {
+		padding: 0 var(--gap-small);
+	}
+
+	.header.header-container {
+		.header-toolbar-section {
+			padding-right: var(--gap-large);
+		}
+	}
+}
+
+@media (min-width: $tabletBreakpoint) and (max-width: calc($desktopBreakpoint - 1px)) {
+	.header.header-container {
+		.header-toolbar-section {
+			padding-right: var(--gap-large);
+		}
+	}
 }
 
 @media (min-width: $desktopBreakpoint) {
-	.main-container {
-		padding: var(--gap-medium) 0;
-		padding-top: calc(var(--navigation-header-height) + var(--gap-medium));
+	table {
+		font-size: 1em;
+	}
+
+	.mdc-data-table__cell,
+	.mdc-data-table__header-cell {
+		padding: 0 var(--gap-medium);
+	}
+
+	.header.header-container {
+		.header-toolbar-section {
+			padding-right: var(--gap-large);
+		}
 	}
 }

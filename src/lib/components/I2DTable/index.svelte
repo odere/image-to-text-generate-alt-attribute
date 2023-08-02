@@ -1,26 +1,29 @@
 <script lang="ts">
+
+  // TODO: Use multydelete button
+  // TODO: Move filter field to navigation
+  // TODO: Create modal to edit data
+  // TODO: Create new mock for data
 	import Button, { Label as ButtonLabel } from '@smui/button';
 	import Checkbox from '@smui/checkbox';
 	import DataTable, { Head, Body, Row, Cell, SortValue } from '@smui/data-table';
+	import Icon from '@smui/textfield/icon';
 	import IconButton from '@smui/icon-button';
 	import LinearProgress from '@smui/linear-progress';
-	import { Image } from '@smui/image-list';
 	import Snackbar, { Actions, Label as SnackbarLabel } from '@smui/snackbar';
+	import Textfield from '@smui/textfield';
+	import { Image } from '@smui/image-list';
+	import { classMap } from '@smui/common/internal';
 
-	import TableContolls from '$lib/components/TableContolls.svelte';
+	import I2DTablePagination from '$lib/components/I2DTable/I2DTablePagination.svelte';
 	import type { Data } from '$lib/api/fetch-data';
+	import { tableI2DState, type PageSize } from './I2DTable.store';
 
-	// TODO: Optimize deletion
-	// TODO: permament delete sent request
-	export let items: Data[] = [];
-	export let rowsPerPage = 5;
-	export let rowsPerPageVariants = [rowsPerPage, 25, 100];
-	export let currentPage = 0;
-	export let loaded = false;
+	export let data: Data[] = [];
+	export let fetching = false;
 
 	let action: 'delete' | 'delete-all' | undefined;
 	let deletingIsPending = false;
-	let filterStr = '';
 	let previosItems: Data[] = [];
 	let previouSelected: number[] = [];
 	let selected: number[] = [];
@@ -30,23 +33,15 @@
 	let tableItems: Data[] = [];
 
 	$: {
-		tableItems = items.filter((item) => item.title.includes(filterStr));
+		if (data.length) {
+			tableI2DState.init({ data });
+		}
 	}
 
+  // TODO: check selection with deletion
 	$: {
-		selected = rowsPerPage < selected.length ? selected.slice(0, rowsPerPage) : selected;
-	}
-
-	$: start = currentPage * rowsPerPage;
-
-	$: end = Math.min(start + rowsPerPage, tableItems.length);
-
-	$: pageItems = tableItems.slice(start, end);
-
-	$: lastPage = Math.max(Math.ceil(tableItems.length / rowsPerPage) - 1, 0);
-
-	$: if (currentPage > lastPage) {
-		currentPage = lastPage;
+		// tableI2DState.selectRows(selected);
+		// selected = $tableI2DState.selectedRows;
 	}
 
 	const handleClosedStacked = (event: CustomEvent<{ reason: string | undefined }>) => {
@@ -56,28 +51,10 @@
 
 	// Sort only string properties
 	const handleSort = () => {
-		pageItems = pageItems.sort((a, b) => {
-			const getOrderedArray = () => {
-				const aValue = a[sort];
-				const bValue = b[sort];
-
-				if (sortDirection === 'ascending') {
-					return [aValue, bValue];
-				}
-
-				return [bValue, aValue];
-			};
-
-			const [aVal, bVal] = getOrderedArray();
-
-			if (typeof aVal === 'string' && typeof bVal === 'string') {
-				return aVal.localeCompare(bVal);
-			}
-
-			return Number(aVal) - Number(bVal);
-		});
+		tableI2DState.sortPageItems(sort, sortDirection);
 	};
 
+  // TODO: fix delete
 	const onDelete = () => {
 		if (deletingIsPending) {
 			return;
@@ -93,6 +70,7 @@
 		snackbar.open();
 	};
 
+  // TODO: fix delete
 	const onDeleteAll = () => {
 		if (deletingIsPending) {
 			return;
@@ -106,12 +84,8 @@
 		snackbar.open();
 	};
 
-	const onRowsPerPageUpdate = (event: CustomEvent<number>) => {
-		rowsPerPage = event.detail;
-	};
-
-	const onFilter = (event: CustomEvent<string>) => {
-		filterStr = event.detail;
+	const onRowsPerPageUpdate = (event: CustomEvent<PageSize>) => {
+		tableI2DState.setPageSize(event.detail);
 	};
 
 	const onUndo = () => {
@@ -121,31 +95,21 @@
 		}
 
 		if (action === 'delete-all') {
-			tableItems = [...items];
+			tableItems = [...data];
 		}
 
 		action = undefined;
 	};
 
-	const gotoFirstPage = () => {
-		selected = [];
-		currentPage = 0;
+	let filterQuery = '';
+
+	const onClear = () => {
+		filterQuery = '';
 	};
 
-	const gotoPrevPage = () => {
-		selected = [];
-		currentPage--;
-	};
-
-	const gotoNextPage = () => {
-		selected = [];
-		currentPage++;
-	};
-
-	const gotoLastPage = () => {
-		selected = [];
-		currentPage = lastPage;
-	};
+	$: {
+		tableI2DState.filterData(filterQuery);
+	}
 </script>
 
 <Snackbar bind:this={snackbar} on:SMUISnackbar:closed={handleClosedStacked} timeoutMs={10000}>
@@ -155,6 +119,23 @@
 		<IconButton action="dismiss" class="material-icons" title="Dissmiss">close</IconButton>
 	</Actions>
 </Snackbar>
+
+<Textfield bind:value={filterQuery} variant="outlined" class="filter-input">
+	<Icon class="material-icons" slot="leadingIcon">filter_alt</Icon>
+
+	<IconButton
+		class={classMap({
+			'material-icons': true,
+			hidden: !filterQuery
+		})}
+		slot="trailingIcon"
+		on:click={onClear}
+		ripple={false}
+		style="height: 36px; padding: 0;"
+	>
+		close
+	</IconButton>
+</Textfield>
 
 <DataTable
 	sortable
@@ -170,26 +151,26 @@
 				<Checkbox />
 			</Cell>
 
-			<Cell sortable={false}>Thumbnails</Cell>
+			<Cell sortable={false}>Preview</Cell>
 
 			<Cell columnId="title" class="full-width">
 				<ButtonLabel>URL</ButtonLabel>
 				<IconButton class="material-icons">arrow_upward</IconButton>
 			</Cell>
 
-			<Cell sortable={false}>
+			<!-- <Cell sortable={false}>
 				<IconButton class="my-colored-icon-button material-icons" on:click={onDelete}>
 					delete
 				</IconButton>
 				<IconButton class="my-colored-icon-button material-icons" on:click={onDeleteAll}>
 					delete_forever
 				</IconButton>
-			</Cell>
+			</Cell> -->
 		</Row>
 	</Head>
 
 	<Body>
-		{#each pageItems as item (item.id)}
+		{#each $tableI2DState.pageItems as item (item.id)}
 			<Row>
 				<Cell checkbox>
 					<Checkbox bind:group={selected} value={item.id} valueKey={`${item.id}`} />
@@ -203,9 +184,10 @@
 					/>
 				</Cell>
 
-				<Cell>{item.title} - {item.id}</Cell>
-
-				<Cell />
+				<Cell class="full-width long-text-cell">
+					https://shared.cdn.smp.schibsted.com/v2/images/02f62bd3-4a13-4c79-b718-0b75a2f611b0?fit=crop&h=1425&w=1900&s=f4d7a442348f73d8085928d2a9caa7ee7ad1002b
+					{item.title} - {item.id}
+				</Cell>
 			</Row>
 		{/each}
 	</Body>
@@ -214,20 +196,8 @@
 		slot="progress"
 		indeterminate
 		aria-label="Data is being loaded..."
-		bind:closed={loaded}
+		bind:closed={fetching}
 	/>
 
-	<TableContolls
-		slot="paginate"
-		on:onFilter={onFilter}
-		on:onRowsPerPageUpdate={onRowsPerPageUpdate}
-		total={tableItems.length}
-		{currentPage}
-		{gotoFirstPage}
-		{gotoLastPage}
-		{gotoNextPage}
-		{gotoPrevPage}
-		{rowsPerPageVariants}
-		{rowsPerPage}
-	/>
+	<I2DTablePagination slot="paginate" on:onRowsPerPageUpdate={onRowsPerPageUpdate} />
 </DataTable>

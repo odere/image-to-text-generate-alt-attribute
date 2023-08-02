@@ -4,11 +4,11 @@
 	import { onMount } from 'svelte';
 
 	import '$lib/styles/global.scss';
-	import ImageToDescriptionTable from '$lib/components/ImageToDescriptionTable.svelte';
+	import I2DTable from '$lib/components/I2DTable/index.svelte';
 	import { type Data, fetchData } from '$lib/api/fetch-data';
 
 	let data: Data[] = [];
-	let loaded = false;
+	let fetching = false;
 	let topAppBar: TopAppBar;
 
 	const toolbarActionsConfig = [
@@ -31,7 +31,7 @@
 
 	onMount(async () => {
 		data = await fetchData();
-		loaded = true;
+		fetching = true;
 	});
 </script>
 
@@ -52,11 +52,5 @@
 </TopAppBar>
 
 <AutoAdjust {topAppBar} class="main main-container content-max-width">
-	<ImageToDescriptionTable
-		rowsPerPage={25}
-		rowsPerPageVariants={[5, 25, 100]}
-		currentPage={0}
-		{loaded}
-		items={data}
-	/>
+	<I2DTable {fetching} {data} />
 </AutoAdjust>
