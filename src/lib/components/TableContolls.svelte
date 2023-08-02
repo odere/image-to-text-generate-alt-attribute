@@ -96,7 +96,7 @@
 		</IconButton>
 	</Textfield>
 
-	<Pagination class="table-controls__pagination">
+	<Pagination class="image-to-description-table-pagination">
 		<svelte:fragment slot="rowsPerPage">
 			<Label>Rows Per Page</Label>
 			<Select

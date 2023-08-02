@@ -161,8 +161,8 @@
 	bind:sort
 	bind:sortDirection
 	on:SMUIDataTable:sorted={handleSort}
-	table$aria-label="Image to description list"
-	class="full-width table-container"
+	table$aria-label="Image to description table"
+	class="full-width image-to-description-table"
 >
 	<Head>
 		<Row>
@@ -177,7 +177,7 @@
 				<IconButton class="material-icons">arrow_upward</IconButton>
 			</Cell>
 
-			<Cell sortable={false} class="relative-container">
+			<Cell sortable={false}>
 				<IconButton class="my-colored-icon-button material-icons" on:click={onDelete}>
 					delete
 				</IconButton>
@@ -197,7 +197,7 @@
 
 				<Cell>
 					<Image
-						class="card-media-square"
+						class="image-preview"
 						src="https://placehold.co/64x64?text=square"
 						alt="Image placeholder"
 					/>
@@ -209,6 +209,13 @@
 			</Row>
 		{/each}
 	</Body>
+
+	<LinearProgress
+		slot="progress"
+		indeterminate
+		aria-label="Data is being loaded..."
+		bind:closed={loaded}
+	/>
 
 	<TableContolls
 		slot="paginate"
@@ -222,12 +229,5 @@
 		{gotoPrevPage}
 		{rowsPerPageVariants}
 		{rowsPerPage}
-	/>
-
-	<LinearProgress
-		slot="progress"
-		indeterminate
-		aria-label="Data is being loaded..."
-		bind:closed={loaded}
 	/>
 </DataTable>
