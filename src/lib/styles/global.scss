@@ -66,10 +66,6 @@ td {
 .main.main-container {
 	background-color: var(--background);
 	padding: var(--navigation-header-height) var(--gap-medium) var(--gap-medium);
-
-	&.mdc-top-app-bar--fixed-adjust {
-		padding-top: var(--navigation-header-height);
-	}
 }
 
 .header.header-container {
@@ -160,6 +156,10 @@ td {
 }
 
 @media only screen and (max-width: calc($mobileBreakpoint - 1px)) and (orientation: portrait) {
+	.main.main-container {
+		padding-top: calc(var(--navigation-header-height) * 2);
+	}
+
 	.header.header-container {
 		.mobile {
 			display: flex;
@@ -188,6 +188,30 @@ td {
 			display: flex;
 			justify-content: space-between;
 			flex-flow: row-reverse;
+		}
+	}
+}
+
+@media only screen and (max-width: calc($mobileBreakpoint - 1px)) and (orientation: landscape) {
+	.main.main-container {
+		padding-top: var(--navigation-header-height);
+	}
+
+	.header.header-container {
+		.mobile {
+			display: flex;
+		}
+
+		.hidden-on-mobile {
+			display: none;
+		}
+
+		.landscape {
+			display: flex;
+		}
+
+		.hidden-on-landscape {
+			display: none;
 		}
 	}
 }

@@ -9,7 +9,6 @@
 	import '$lib/styles/global.scss';
 
 	let data: Data[] = [];
-	let selected: number[] = [];
 	let fetching = false;
 	let topAppBar: TopAppBar;
 
@@ -21,36 +20,29 @@
 
 <TopAppBar
 	bind:this={topAppBar}
-	variant="standard"
+	variant="fixed"
 	class="header header-container"
 	color={'secondary'}
 >
+	<!-- Depend on media query HTML element would be displayed none -->
 	<Row class="header-row content-max-width">
 		<Section class="header-title-section">
 			<Title>I-2-T</Title>
 		</Section>
-		<Section class="header-toolbar-section hidden-on-mobile" align="end" toolbar>
-			<I2DTableToolbar
-				on:undoDeleteAll={() => {
-					// Sync binded value
-					selected = [];
-				}}
-			/>
+		<Section class="header-toolbar-section hidden-on-mobile landscape" align="end" toolbar>
+			<I2DTableToolbar />
 		</Section>
 	</Row>
 
-	<Row class="header-row content-max-width mobile">
+	<!-- TODO: use resize observer to prevent component rendering -->
+	<!-- Depend on media query HTML element would be displayed none -->
+	<Row class="header-row content-max-width mobile hidden-on-landscape">
 		<Section class="header-toolbar-section">
-			<I2DTableToolbar
-				on:undoDeleteAll={() => {
-					// Sync binded value
-					selected = [];
-				}}
-			/>
+			<I2DTableToolbar />
 		</Section>
 	</Row>
 </TopAppBar>
 
 <AutoAdjust {topAppBar} class="main main-container content-max-width">
-	<I2DTable {fetching} {data} {selected} />
+	<I2DTable {fetching} {data} />
 </AutoAdjust>

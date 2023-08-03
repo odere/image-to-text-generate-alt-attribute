@@ -5,36 +5,31 @@
 	import Menu from '@smui/menu';
 	import Snackbar, { Actions as SnackbarActions, Label as SnackbarLabel } from '@smui/snackbar';
 	import { classMap } from '@smui/common/internal';
-	import { createEventDispatcher } from 'svelte';
 	import { Input } from '@smui/textfield';
 	import Paper from '@smui/paper';
 
-	import { tableI2DState, type Actions } from './I2DTable.store';
-
-	const dispatch = createEventDispatcher();
+	import { tableI2DState, type ActionType } from './I2DTable.store';
 
 	let menu: Menu;
 	let snackbar: Snackbar;
 	let filterQuery = '';
 
-	$: itemsToDelete =
-		$tableI2DState.itemsPreviousState.length - $tableI2DState.items.length ||
-		$tableI2DState.data.length;
-
 	$: showDeleteOption = $tableI2DState.selectedRows.length;
-
-	$: {
-		tableI2DState.filterData(filterQuery);
-	}
+	$: actionSelectedItems = $tableI2DState.action?.selectedRows || [];
 
 	const handleClosedStacked = () => {
-		tableI2DState.update({
-			executedAction: undefined
-		});
+		const action = $tableI2DState.action;
+
+		if (action) {
+			// TODO: make a call to permanent delete
+			tableI2DState.update({
+				action: undefined
+			});
+		}
 	};
 
-	const executeAction = (action: Actions) => {
-		if ($tableI2DState.executedAction) {
+	const executeAction = (action: ActionType) => {
+		if (!action) {
 			return;
 		}
 
@@ -43,8 +38,17 @@
 		snackbar.open();
 	};
 
-	const onClear = () => {
+	const onInputChange = (event: CustomEvent<HTMLInputElement>) => {
+		const input = event.target as HTMLInputElement;
+
+		if (input) {
+			tableI2DState.filterData(input.value);
+		}
+	};
+
+	const onInputClear = () => {
 		filterQuery = '';
+		tableI2DState.filterData('');
 	};
 
 	const actionsConfig = {
@@ -69,14 +73,19 @@
 <div class="image-to-description-table__toolbar">
 	<Paper class="filter-input" elevation={6}>
 		<Icon class="material-icons">search</Icon>
-		<Input bind:value={filterQuery} placeholder="Search" class="solo-input" />
+		<Input
+			bind:value={filterQuery}
+			on:input={onInputChange}
+			placeholder="Search"
+			class="solo-input"
+		/>
 		<IconButton
 			class={classMap({
 				'material-icons': true,
 				'close-button': true,
 				hidden: !filterQuery
 			})}
-			on:click={onClear}
+			on:click={onInputClear}
 			ripple={false}
 		>
 			close
@@ -102,8 +111,8 @@
 				variant="raised"
 				class="action-button"
 			>
-				<Label class="hidden-on-mobile">{actionsConfig.delete.label}</Label>
-				<Icon class="material-icons action-icons mobile">delete</Icon>
+				<Label class="hidden-on-mobile hidden-on-landscape">{actionsConfig.delete.label}</Label>
+				<Icon class="material-icons action-icons mobile landscape">delete</Icon>
 			</Button>
 
 			<div use:GroupItem>
@@ -140,16 +149,9 @@
 </div>
 
 <Snackbar bind:this={snackbar} on:SMUISnackbar:closed={handleClosedStacked}>
-	<SnackbarLabel>You have deleted {itemsToDelete} items.</SnackbarLabel>
+	<SnackbarLabel>You have deleted {actionSelectedItems.length} items.</SnackbarLabel>
 	<SnackbarActions>
-		<Button
-			action="undo"
-			on:click={() => {
-				tableI2DState.undoAction();
-				// Sync binded value
-				dispatch('undoDeleteAll');
-			}}>Undo</Button
-		>
+		<Button action="undo" on:click={tableI2DState.undoAction}>Undo</Button>
 		<IconButton action="dismiss" class="material-icons" title="Dissmiss">close</IconButton>
 	</SnackbarActions>
 </Snackbar>

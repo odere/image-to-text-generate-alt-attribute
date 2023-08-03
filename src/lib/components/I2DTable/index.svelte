@@ -15,13 +15,15 @@
 
 	export let data: Data[] = [];
 	export let fetching = false;
-	export let selected: number[] = [];
 
 	let sort: keyof Data = 'title';
 	let sortDirection: Lowercase<keyof typeof SortValue> = 'ascending';
 
+	$: allSelected = $tableI2DState.allSelected;
+	$: selected = $tableI2DState.selectedRows;
+
 	$: {
-		if (data.length !== $tableI2DState.data.length) {
+		if (data.length !== $tableI2DState.data.length && !$tableI2DState.action) {
 			tableI2DState.init({ data });
 		}
 	}
@@ -32,8 +34,55 @@
 
 	const onCheckboxChange = (event: CustomEvent<HTMLInputElement>) => {
 		const checkbox = event.target as HTMLInputElement;
+
 		if (checkbox) {
-			tableI2DState.toggleSelectedRow(parseInt(checkbox.value, 10));
+			const isIndeterminateState = selected.length !== $tableI2DState.pageSize;
+
+			if (isIndeterminateState) {
+				tableI2DState.update({
+					allSelected: null,
+					selectedRows: selected
+				});
+
+				return;
+			}
+
+			if (!selected.length) {
+				tableI2DState.update({
+					allSelected: false,
+					selectedRows: selected
+				});
+
+				return;
+			}
+
+			tableI2DState.update({
+				allSelected: true,
+				selectedRows: selected
+			});
+		}
+	};
+
+	const onAllCheckboxChange = (event: CustomEvent<HTMLInputElement>) => {
+		const checkbox = event.target as HTMLInputElement;
+
+		if (checkbox) {
+			const checked = checkbox.checked;
+			const isIndeterminateState = selected.length && selected.length !== $tableI2DState.pageSize;
+
+			if (isIndeterminateState || checked) {
+				tableI2DState.update({
+					allSelected: false,
+					selectedRows: []
+				});
+
+				return;
+			}
+
+			tableI2DState.update({
+				allSelected: true,
+				selectedRows: $tableI2DState.pageItems.map(({ id }) => id)
+			});
 		}
 	};
 </script>
@@ -50,8 +99,12 @@
 >
 	<Head>
 		<Row>
-			<Cell checkbox>
-				<Checkbox on:change={tableI2DState.toggleSelectedAllRows} />
+			<Cell>
+				<Checkbox
+					on:change={onAllCheckboxChange}
+					bind:checked={allSelected}
+					indeterminate={allSelected === null}
+				/>
 			</Cell>
 
 			<Cell sortable={false}>Preview</Cell>
@@ -66,7 +119,7 @@
 	<Body>
 		{#each $tableI2DState.pageItems as item (item.id)}
 			<Row>
-				<Cell checkbox>
+				<Cell>
 					<Checkbox
 						bind:group={selected}
 						value={item.id}
