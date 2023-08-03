@@ -1,5 +1,4 @@
 <script lang="ts">
-	// TODO: Include table controls into navigation menu
 	// TODO: Create modal to edit data
 	// TODO: Create new mock for data
 	import Checkbox from '@smui/checkbox';
@@ -9,15 +8,15 @@
 	import { Image } from '@smui/image-list';
 	import { Label as ButtonLabel } from '@smui/button';
 
-	import I2DTablePagination from '$lib/components/I2DTable/I2DTablePagination.svelte';
-	import I2DTableToolbar from '$lib/components/I2DTable/I2DTableToolbar.svelte';
 	import type { Data } from '$lib/api/fetch-data';
+
+	import I2DTablePagination from './I2DTablePagination.svelte';
 	import { tableI2DState, type PageSize } from './I2DTable.store';
 
 	export let data: Data[] = [];
 	export let fetching = false;
+	export let selected: number[] = [];
 
-	let selected: number[] = [];
 	let sort: keyof Data = 'title';
 	let sortDirection: Lowercase<keyof typeof SortValue> = 'ascending';
 
@@ -38,13 +37,6 @@
 		}
 	};
 </script>
-
-<I2DTableToolbar
-	on:undoDeleteAll={() => {
-		// Sync binded value
-		selected = [];
-	}}
-/>
 
 <DataTable
 	sortable

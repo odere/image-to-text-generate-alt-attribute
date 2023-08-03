@@ -4,10 +4,10 @@
 	import List, { Item, Text } from '@smui/list';
 	import Menu from '@smui/menu';
 	import Snackbar, { Actions as SnackbarActions, Label as SnackbarLabel } from '@smui/snackbar';
-	import Textfield from '@smui/textfield';
 	import { classMap } from '@smui/common/internal';
 	import { createEventDispatcher } from 'svelte';
-	import HelperText from '@smui/textfield/helper-text';
+	import { Input } from '@smui/textfield';
+	import Paper from '@smui/paper';
 
 	import { tableI2DState, type Actions } from './I2DTable.store';
 
@@ -67,47 +67,50 @@
 </script>
 
 <div class="image-to-description-table__toolbar">
-	<div class="filter-input">
-		<Textfield bind:value={filterQuery} label="Filter by URL">
-			<HelperText slot="helper">Clear to revert filtering</HelperText>
-			<IconButton
-				class={classMap({
-					'material-icons': true,
-					hidden: !filterQuery
-				})}
-				slot="trailingIcon"
-				on:click={onClear}
-				ripple={false}
-			>
-				close
-			</IconButton>
-		</Textfield>
-	</div>
+	<Paper class="filter-input" elevation={6}>
+		<Icon class="material-icons">search</Icon>
+		<Input bind:value={filterQuery} placeholder="Search" class="solo-input" />
+		<IconButton
+			class={classMap({
+				'material-icons': true,
+				'close-button': true,
+				hidden: !filterQuery
+			})}
+			on:click={onClear}
+			ripple={false}
+		>
+			close
+		</IconButton>
+	</Paper>
 
 	<div class="action-section">
 		<Button
 			on:click={actionsConfig.addRecord.handler}
 			aria-label={actionsConfig.addRecord.aria}
-			variant="outlined"
+			variant="raised"
+			class="action-button"
 		>
-			<Label>{actionsConfig.addRecord.label}</Label>
+			<Label class="hidden-on-mobile">{actionsConfig.addRecord.label}</Label>
+			<Icon class="material-icons action-icons mobile">add</Icon>
 		</Button>
 
-		<Group variant="outlined">
+		<Group variant="raised">
 			<Button
 				disabled={!showDeleteOption}
 				on:click={actionsConfig.delete.handler}
 				aria-label={actionsConfig.delete.aria}
-				variant="outlined"
+				variant="raised"
+				class="action-button"
 			>
-				<Label>{actionsConfig.delete.label}</Label>
+				<Label class="hidden-on-mobile">{actionsConfig.delete.label}</Label>
+				<Icon class="material-icons action-icons mobile">delete</Icon>
 			</Button>
 
 			<div use:GroupItem>
 				<Button
 					disabled={!showDeleteOption}
 					on:click={() => menu.setOpen(true)}
-					variant="outlined"
+					variant="raised"
 					class="button-group-dropdown"
 				>
 					<Icon class="material-icons">arrow_drop_down</Icon>
