@@ -20,6 +20,7 @@ $desktopBreakpoint: 1280px;
 body,
 html {
 	margin: 0;
+	background-color: var(--background);
 }
 
 td {
@@ -44,16 +45,33 @@ td {
 	margin: var(--gap) 0;
 }
 
+.button-group-dropdown {
+	padding: 0;
+	min-width: 36px;
+
+	.material-icons {
+		margin: 0;
+	}
+}
+
 .full-width {
 	width: 100%;
 }
 
 .hidden {
 	visibility: hidden;
+	opacity: 0;
+	height: 0;
+	width: 0;
 }
 
 .main.main-container {
 	background-color: var(--background);
+	padding: var(--navigation-header-height) var(--gap-medium) var(--gap-medium);
+
+	&.mdc-top-app-bar--fixed-adjust {
+		padding-top: var(--navigation-header-height);
+	}
 }
 
 .header.header-container {
@@ -68,20 +86,31 @@ td {
 	}
 }
 
+.image-to-description-table__toolbar {
+	display: flex;
+	gap: var(--gap-medium);
+	padding: var(--gap-small) 0;
+
+	.action-section {
+		display: flex;
+		align-items: center;
+		gap: var(--gap-medium);
+	}
+
+	.filter-input {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+	}
+}
+
 .image-to-description-table {
 	.image-to-description-table-pagination {
 		border: none;
 	}
 }
 
-.filter-input {
-	flex-basis: 30%;
-	height: 36px;
-	display: flex;
-	align-items: center;
-}
-
-@media (max-width: calc($mobileBreakpoint - 1px)) {
+@media only screen and (max-width: calc($mobileBreakpoint - 1px)) {
 	.pagination-selector {
 		display: none;
 	}
@@ -100,7 +129,24 @@ td {
 	}
 }
 
-@media (min-width: $mobileBreakpoint) and (max-width: calc($tabletBreakpoint - 1px)) {
+@media only screen and (max-width: calc($mobileBreakpoint - 1px)) and (orientation: portrait) {
+	.image-to-description-table__toolbar {
+		flex-direction: column;
+		gap: var(--gap-small);
+
+		.mdc-text-field-helper-line {
+			display: none;
+		}
+
+		.action-section {
+			display: flex;
+			justify-content: space-between;
+			flex-flow: row-reverse;
+		}
+	}
+}
+
+@media only screen and (min-width: $mobileBreakpoint) and (max-width: calc($tabletBreakpoint - 1px)) {
 	.pagination-selector {
 		display: block;
 	}
@@ -125,7 +171,7 @@ td {
 	}
 }
 
-@media (min-width: $tabletBreakpoint) and (max-width: calc($desktopBreakpoint - 1px)) {
+@media only screen and (min-width: $tabletBreakpoint) and (max-width: calc($desktopBreakpoint - 1px)) {
 	.header.header-container {
 		.header-toolbar-section {
 			padding-right: var(--gap-large);
@@ -133,7 +179,7 @@ td {
 	}
 }
 
-@media (min-width: $desktopBreakpoint) {
+@media only screen and (min-width: $desktopBreakpoint) {
 	table {
 		font-size: 1em;
 	}

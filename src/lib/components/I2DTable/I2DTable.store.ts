@@ -3,13 +3,14 @@ import type { Data } from '$lib/api/fetch-data';
 import type { SortValue } from '@smui/data-table';
 
 export type PageSize = 10 | 25 | 50 | 100;
-export type Actions = 'delete' | 'delete-all';
+export type Actions = 'delete' | 'deleteAll';
 
 export interface TableState {
 	currentPage: number;
 	data: Data[];
 	executedAction?: Actions;
 	items: Data[];
+	itemsPreviousState: Data[];
 	lastPage: number;
 	pageEnd: number;
 	pageItems: Data[];
@@ -17,11 +18,13 @@ export interface TableState {
 	pageSizes: PageSize[];
 	pageStart: number;
 	selectedRows: number[];
+	selectedRowsPreviousState: number[];
 }
 
 export const defaultI2DState: TableState = {
 	data: [],
 	items: [],
+	itemsPreviousState: [],
 	pageItems: [],
 	currentPage: 0,
 	executedAction: undefined,
@@ -30,7 +33,8 @@ export const defaultI2DState: TableState = {
 	pageSize: 10,
 	pageSizes: [10, 25, 100],
 	pageStart: 0,
-	selectedRows: []
+	selectedRows: [],
+	selectedRowsPreviousState: []
 };
 
 const createCount = () => {
@@ -52,6 +56,51 @@ const createCount = () => {
 				};
 			});
 		},
+		toggleSelectedRow: (selectedID: number) =>
+			update((state) => {
+				const { selectedRows } = state;
+
+				const isSelected = selectedRows.includes(selectedID);
+				let updateState: Partial<TableState> = {};
+
+				if (isSelected) {
+					updateState = {
+						selectedRows: selectedRows.filter((id) => id !== selectedID)
+					};
+				} else {
+					updateState = {
+						selectedRows: [...selectedRows, selectedID].sort()
+					};
+				}
+
+				console.debug('tableI2DState:toggleSelectedAllRows', updateState);
+
+				return {
+					...state,
+					...updateState
+				};
+			}),
+		toggleSelectedAllRows: () =>
+			update((state) => {
+				const { selectedRows, pageItems } = state;
+
+				let updateState: Partial<TableState> = {
+					selectedRows: []
+				};
+
+				if (selectedRows.length !== pageItems.length) {
+					updateState = {
+						selectedRows: pageItems.map(({ id }) => id).sort()
+					};
+				}
+
+				console.debug('tableI2DState:toggleSelectedAllRows', updateState);
+
+				return {
+					...state,
+					...updateState
+				};
+			}),
 		setPageSize: (size: PageSize) =>
 			update((state) => {
 				const { pageStart, items } = state;
@@ -149,6 +198,89 @@ const createCount = () => {
 				return {
 					...state,
 					selectedRows
+				};
+			}),
+		undoAction: () =>
+			update((state) => {
+				const {
+					data,
+					itemsPreviousState,
+					selectedRowsPreviousState,
+					executedAction,
+					pageStart,
+					pageEnd
+				} = state;
+
+				let updateState: Partial<TableState> = {
+					executedAction: undefined
+				};
+
+				if (executedAction === 'delete') {
+					updateState = {
+						...updateState,
+						items: [...itemsPreviousState],
+						itemsPreviousState: [...data],
+						pageItems: itemsPreviousState.slice(pageStart, pageEnd),
+						selectedRows: [...selectedRowsPreviousState],
+						selectedRowsPreviousState: []
+					};
+				}
+
+				if (executedAction === 'deleteAll') {
+					updateState = {
+						...updateState,
+						items: [...data],
+						itemsPreviousState: [...data],
+						pageItems: data.slice(pageStart, pageEnd),
+						selectedRows: [],
+						selectedRowsPreviousState: []
+					};
+				}
+
+				console.debug('tableI2DState:undoAction', updateState);
+
+				return {
+					...state,
+					...updateState
+				};
+			}),
+		delete: () =>
+			update((state) => {
+				const { selectedRows, items, pageStart, pageSize } = state;
+
+				const updatedItems = items.filter(({ id }) => !selectedRows.includes(id));
+				const pageEnd = Math.min(pageStart + pageSize, updatedItems.length);
+
+				const updateState: Partial<TableState> = {
+					executedAction: 'delete',
+					items: updatedItems,
+					itemsPreviousState: [...items],
+					pageItems: updatedItems.slice(pageStart, pageEnd),
+					selectedRows: [],
+					selectedRowsPreviousState: [...selectedRows]
+				};
+
+				console.debug('tableI2DState:delete', updateState);
+
+				return {
+					...state,
+					...updateState
+				};
+			}),
+		deleteAll: () =>
+			update((state) => {
+				const updateState: Partial<TableState> = {
+					executedAction: 'deleteAll',
+					items: [],
+					pageItems: [],
+					selectedRows: []
+				};
+
+				console.debug('tableI2DState:deleteAll', updateState);
+
+				return {
+					...state,
+					...updateState
 				};
 			}),
 		gotoPage: (pageIndex: number) =>
