@@ -28,10 +28,6 @@
 		}
 	}
 
-	const onRowsPerPageUpdate = (event: CustomEvent<PageSize>) => {
-		tableI2DState.setPageSize(event.detail);
-	};
-
 	const onCheckboxChange = (seldcgtedItems?: string[]) => {
 		const selectedRows = seldcgtedItems || selected;
 		const isIndeterminateState = selectedRows.length !== $tableI2DState.pageSize;
@@ -160,5 +156,5 @@
 		bind:closed={fetching}
 	/>
 
-	<I2DTablePagination slot="paginate" on:onRowsPerPageUpdate={onRowsPerPageUpdate} />
+	<I2DTablePagination slot="paginate" />
 </DataTable>

@@ -3,16 +3,19 @@
 	import Select, { Option } from '@smui/select';
 	import { Label } from '@smui/common';
 	import { Pagination } from '@smui/data-table';
-	import { createEventDispatcher } from 'svelte';
 	import { tableI2DState } from './I2DTable.store';
-
-	const dispatch = createEventDispatcher();
 
 	const onRowsPerPageUpdate = (event: any) => {
 		const clickedItemIndex = event.detail.index || 0;
 
-		dispatch('onRowsPerPageUpdate', $tableI2DState.pageSizes[clickedItemIndex]);
+		tableI2DState.setPageSize($tableI2DState.pageSizes[clickedItemIndex]);
 	};
+
+	$: {
+		if ($tableI2DState.data.length) {
+			console.log($tableI2DState.currentPage, $tableI2DState.lastPage);
+		}
+	}
 
 	$: paginationControlsConfig = [
 		{

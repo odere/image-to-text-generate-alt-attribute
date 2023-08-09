@@ -194,9 +194,13 @@ const createI2DTableState = () => {
 			}),
 		delete: () =>
 			update((state) => {
-				const { selectedRows, items, pageStart, pageSize } = state;
+				const { selectedRows, items, pageSize } = state;
 
 				const updatedItems = items.filter(({ id }) => !selectedRows.includes(id));
+
+				const lastPage = state.lastPage - (selectedRows.length % state.pageSize);
+				const currentPage = state.currentPage !== lastPage ? state.currentPage : lastPage - 1;
+				const pageStart = currentPage * pageSize;
 				const pageEnd = Math.min(pageStart + pageSize, updatedItems.length);
 				const pageItems = updatedItems.slice(pageStart, pageEnd);
 
@@ -206,8 +210,12 @@ const createI2DTableState = () => {
 						selectedRows: [...selectedRows]
 					},
 					allSelected: false,
+					currentPage,
 					items: updatedItems,
+					lastPage,
+					pageEnd,
 					pageItems,
+					pageStart,
 					selectedRows: []
 				};
 
