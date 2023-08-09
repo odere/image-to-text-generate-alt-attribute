@@ -153,3 +153,81 @@
 		<IconButton action="dismiss" class="material-icons" title="Dissmiss">close</IconButton>
 	</SnackbarActions>
 </Snackbar>
+
+<style lang="scss">
+	@import '../../styles/breakpoints.scss';
+
+	:global(.button-group-dropdown) {
+		padding: 0;
+		min-width: 36px;
+
+		:global(.material-icons) {
+			margin: 0;
+		}
+	}
+
+	:global(.action-button) {
+		padding: 0 var(--gap-small);
+		min-width: var(--mdc-protected-button-container-height);
+	}
+
+	.action-section {
+		display: flex;
+		align-items: center;
+		gap: var(--gap-medium);
+	}
+
+	:global(.filter-input) {
+		display: flex;
+		align-items: center;
+		flex-grow: 1;
+		padding: 0 var(--gap-medium);
+		height: var(--mdc-protected-button-container-height);
+		gap: var(--gap-small);
+		max-width: 400px;
+
+		:global(.close-button) {
+			margin: 0;
+			padding: 0;
+			color: var(--mdc-theme-on-surface);
+		}
+
+		:global(.solo-input) {
+			flex-grow: 1;
+			color: var(--mdc-theme-on-surface);
+
+			&::placeholder {
+				color: var(--mdc-theme-on-surface);
+				opacity: 0.6;
+			}
+		}
+	}
+
+	@media only screen and (max-width: calc($mobileBreakpoint - 1px)) and (orientation: portrait) {
+		:global(.mobile) {
+			display: flex;
+		}
+
+		:global(.hidden-on-mobile) {
+			display: none;
+		}
+	}
+
+	@media only screen and (max-width: calc($mobileBreakpoint - 1px)) and (orientation: landscape) {
+		:global(.mobile) {
+			display: flex;
+		}
+
+		:global(.hidden-on-mobile) {
+			display: none;
+		}
+
+		:global(.landscape) {
+			display: flex;
+		}
+
+		:global(.hidden-on-landscape) {
+			display: none;
+		}
+	}
+</style>

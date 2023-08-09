@@ -1,6 +1,4 @@
-$mobileBreakpoint: 767px;
-$tabletBreakpoint: 1023px;
-$desktopBreakpoint: 1280px;
+@import './breakpoints.scss';
 
 :root {
 	--mobile-breakpoint: #{$mobileBreakpoint};
@@ -21,37 +19,16 @@ html {
 	margin: 0;
 	background-color: var(--background);
 	box-sizing: border-box;
+	overflow: hidden;
 }
 
 td {
 	white-space: pre-line;
 }
 
-.long-text-cell {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	max-width: 100px;
-}
-
 .content-max-width {
 	margin: 0 auto;
 	max-width: var(--desktop-breakpoint);
-}
-
-.image-preview {
-	width: auto;
-	display: inherit;
-	margin: var(--gap) 0;
-}
-
-.button-group-dropdown {
-	padding: 0;
-	min-width: 36px;
-
-	.material-icons {
-		margin: 0;
-	}
 }
 
 .full-width {
@@ -60,204 +37,4 @@ td {
 
 .hidden {
 	visibility: hidden;
-}
-
-.main.main-container {
-	background-color: var(--background);
-	padding: var(--gap-medium);
-	margin-top: calc(var(--navigation-header-height) * 2);
-}
-
-.header.header-container {
-	top: 0;
-
-	.mobile {
-		display: none;
-	}
-
-	.action-icons {
-		margin: 0;
-	}
-
-	.action-button {
-		min-width: unset;
-	}
-
-	.header-row {
-		height: var(--navigation-header-height);
-	}
-
-	.header-toolbar-section {
-		display: flex;
-		gap: var(--gap-medium);
-		padding-right: var(--gap-medium);
-	}
-}
-
-.header-toolbar-section {
-	display: flex;
-	gap: var(--gap-medium);
-	padding: var(--gap-small) 0;
-  background: var(--background      );
-
-	.action-section {
-		display: flex;
-		align-items: center;
-		gap: var(--gap-medium);
-	}
-}
-
-.image-to-description-table {
-	.image-to-description-table-pagination {
-		border: none;
-	}
-}
-
-.filter-input {
-	display: flex;
-	align-items: center;
-	flex-grow: 1;
-	margin: 0 var(--gap-medium);
-	padding: 0 var(--gap-medium);
-	height: var(--mdc-protected-button-container-height);
-	gap: var(--gap-small);
-
-	.close-button {
-		margin: 0;
-		padding: 0;
-		color: var(--mdc-theme-on-surface);
-	}
-
-	.solo-input {
-		flex-grow: 1;
-		color: var(--mdc-theme-on-surface);
-
-		&::placeholder {
-			color: var(--mdc-theme-on-surface);
-			opacity: 0.6;
-		}
-	}
-}
-
-@media only screen and (max-width: calc($mobileBreakpoint - 1px)) {
-	.pagination-selector {
-		display: none;
-	}
-
-	.image-to-description-table-pagination {
-		justify-content: space-around;
-	}
-
-	table {
-		font-size: 0.5em;
-	}
-
-	.mdc-data-table__cell,
-	.mdc-data-table__header-cell {
-		padding: 0 var(--gap);
-	}
-}
-
-@media only screen and (max-width: calc($mobileBreakpoint - 1px)) and (orientation: portrait) {
-	.header.header-container {
-		.mobile {
-			display: flex;
-
-			.header-toolbar-section {
-				flex-direction: row;
-				justify-content: space-between;
-				flex-grow: 1;
-				flex-direction: column;
-				gap: var(--gap-small);
-
-				.mdc-text-field-helper-line {
-					display: none;
-				}
-
-				.action-section {
-					display: flex;
-					justify-content: space-between;
-					flex-flow: row-reverse;
-				}
-			}
-		}
-
-		.hidden-on-mobile {
-			display: none;
-		}
-	}
-}
-
-@media only screen and (max-width: calc($mobileBreakpoint - 1px)) and (orientation: landscape) {
-	.main.main-container {
-		padding-top: var(--navigation-header-height);
-	}
-
-	.header.header-container {
-		.mobile {
-			display: flex;
-		}
-
-		.hidden-on-mobile {
-			display: none;
-		}
-
-		.landscape {
-			display: flex;
-		}
-
-		.hidden-on-landscape {
-			display: none;
-		}
-	}
-}
-
-@media only screen and (min-width: $mobileBreakpoint) and (max-width: calc($tabletBreakpoint - 1px)) {
-	.pagination-selector {
-		display: block;
-	}
-
-	.image-to-description-table-pagination {
-		justify-content: flex-end;
-	}
-
-	table {
-		font-size: 0.75em;
-	}
-
-	.mdc-data-table__cell,
-	.mdc-data-table__header-cell {
-		padding: 0 var(--gap-small);
-	}
-
-	.header.header-container {
-		.header-toolbar-section {
-			padding-right: var(--gap-large);
-		}
-	}
-}
-
-@media only screen and (min-width: $tabletBreakpoint) and (max-width: calc($desktopBreakpoint - 1px)) {
-	.header.header-container {
-		.header-toolbar-section {
-			padding-right: var(--gap-large);
-		}
-	}
-}
-
-@media only screen and (min-width: $desktopBreakpoint) {
-	table {
-		font-size: 1em;
-	}
-
-	.mdc-data-table__cell,
-	.mdc-data-table__header-cell {
-		padding: 0 var(--gap-medium);
-	}
-
-	.header.header-container {
-		.header-toolbar-section {
-			padding-right: var(--gap-large);
-		}
-	}
 }

@@ -47,7 +47,7 @@
 	];
 </script>
 
-<Pagination class="image-to-description-table-pagination">
+<Pagination class="i2d-pagination">
 	<svelte:fragment slot="rowsPerPage">
 		<div class="pagination-selector">
 			<Label>Page size</Label>
@@ -81,3 +81,31 @@
 		</IconButton>
 	{/each}
 </Pagination>
+
+<style lang="scss">
+	@import '../../styles/breakpoints.scss';
+
+	:global(.i2d-pagination) {
+		border: none;
+	}
+
+	@media only screen and (max-width: calc($mobileBreakpoint - 1px)) {
+		:global(.mdc-data-table__pagination-total) {
+			margin-left: 0;
+		}
+
+		.pagination-selector {
+			display: none;
+		}
+	}
+
+	@media only screen and (min-width: $mobileBreakpoint) and (max-width: calc($tabletBreakpoint - 1px)) {
+		:global(.i2d-pagination) {
+			justify-content: flex-end;
+		}
+
+		.pagination-selector {
+			display: block;
+		}
+	}
+</style>

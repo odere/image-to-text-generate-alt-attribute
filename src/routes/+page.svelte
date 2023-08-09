@@ -1,16 +1,13 @@
 <script lang="ts">
-	import TopAppBar, { Row, Section, Title, AutoAdjust } from '@smui/top-app-bar';
 	import { onMount } from 'svelte';
+	import { Row, Section } from '@smui/top-app-bar';
 
 	import I2DTable from '$lib/components/I2DTable/index.svelte';
-	import { type Data, fetchData } from '$lib/api/fetch-data';
 	import I2DTableToolbar from '$lib/components/I2DTable/I2DTableToolbar.svelte';
-
-	import '$lib/styles/global.scss';
+	import { type Data, fetchData } from '$lib/api/fetch-data';
 
 	let data: Data[] = [];
 	let fetching = false;
-	let topAppBar: TopAppBar;
 
 	onMount(async () => {
 		data = await fetchData();
@@ -18,28 +15,54 @@
 	});
 </script>
 
-<TopAppBar
-	bind:this={topAppBar}
-	variant="fixed"
-	class="header header-container"
-	color={'secondary'}
->
-	<Row class="header-row content-max-width">
-		<Section class="header-title-section" align="start">
-			<Title>I-2-D</Title>
-			<Title>I-2-D</Title>
-			<Title>I-2-D</Title>
-			<Title>I-2-D</Title>
-		</Section>
-	</Row>
+<Row class="header-row table-toolbar">
+	<Section class="header-toolbar-section content-max-width">
+		<I2DTableToolbar />
+	</Section>
+</Row>
 
-	<Row class="header-row content-max-width">
-		<Section class="header-toolbar-section" align="start" toolbar>
-			<I2DTableToolbar />
-		</Section>
-	</Row>
-</TopAppBar>
+<I2DTable {fetching} {data} />
 
-<AutoAdjust {topAppBar} class="main main-container content-max-width">
-	<I2DTable {fetching} {data} />
-</AutoAdjust>
+<style lang="scss">
+	@import '../lib/styles/breakpoints.scss';
+
+	/* Override parent component styles */
+	:global(.main.main-container) {
+		height: unset;
+		overflow: unset;
+		max-width: unset;
+		margin: 0;
+		padding: 0;
+		padding-top: var(--navigation-header-height);
+	}
+
+	:global(.header-toolbar-section) {
+		display: flex;
+		gap: var(--gap-medium);
+		padding: var(--gap-small) 0;
+		background: var(--background);
+		justify-content: space-between;
+	}
+
+	:global(.table-toolbar) {
+		position: fixed;
+		top: var(--navigation-header-height);
+		z-index: 100;
+		background-color: var(--background);
+		padding: var(--gap-small) var(--gap-medium);
+		width: 100%;
+
+		:global(.mobile) {
+			display: none;
+		}
+	}
+
+	@media only screen and (max-width: calc($mobileBreakpoint - 1px)) {
+		:global(.table-toolbar) {
+			:global(.mobile.material-icons) {
+				display: inline-block;
+				margin: 0;
+			}
+		}
+	}
+</style>
