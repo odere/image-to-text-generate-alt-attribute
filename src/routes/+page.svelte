@@ -24,20 +24,17 @@
 	class="header header-container"
 	color={'secondary'}
 >
-	<!-- Depend on media query HTML element would be displayed none -->
 	<Row class="header-row content-max-width">
-		<Section class="header-title-section">
-			<Title>I-2-T</Title>
-		</Section>
-		<Section class="header-toolbar-section hidden-on-mobile landscape" align="end" toolbar>
-			<I2DTableToolbar />
+		<Section class="header-title-section" align="start">
+			<Title>I-2-D</Title>
+			<Title>I-2-D</Title>
+			<Title>I-2-D</Title>
+			<Title>I-2-D</Title>
 		</Section>
 	</Row>
 
-	<!-- TODO: use resize observer to prevent component rendering -->
-	<!-- Depend on media query HTML element would be displayed none -->
-	<Row class="header-row content-max-width mobile hidden-on-landscape">
-		<Section class="header-toolbar-section">
+	<Row class="header-row content-max-width">
+		<Section class="header-toolbar-section" align="start" toolbar>
 			<I2DTableToolbar />
 		</Section>
 	</Row>

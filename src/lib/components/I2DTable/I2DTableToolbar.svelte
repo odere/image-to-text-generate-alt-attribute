@@ -70,82 +70,80 @@
 	};
 </script>
 
-<div class="image-to-description-table__toolbar">
-	<Paper class="filter-input" elevation={6}>
-		<Icon class="material-icons">search</Icon>
-		<Input
-			bind:value={filterQuery}
-			on:input={onInputChange}
-			placeholder="Search"
-			class="solo-input"
-		/>
-		<IconButton
-			class={classMap({
-				'material-icons': true,
-				'close-button': true,
-				hidden: !filterQuery
-			})}
-			on:click={onInputClear}
-			ripple={false}
-		>
-			close
-		</IconButton>
-	</Paper>
+<Paper class="filter-input" elevation={6}>
+	<Icon class="material-icons">search</Icon>
+	<Input
+		bind:value={filterQuery}
+		on:input={onInputChange}
+		placeholder="Search"
+		class="solo-input"
+	/>
+	<IconButton
+		class={classMap({
+			'material-icons': true,
+			'close-button': true,
+			hidden: !filterQuery
+		})}
+		on:click={onInputClear}
+		ripple={false}
+	>
+		close
+	</IconButton>
+</Paper>
 
-	<div class="action-section">
+<div class="action-section">
+	<Button
+		on:click={actionsConfig.addRecord.handler}
+		aria-label={actionsConfig.addRecord.aria}
+		variant="raised"
+		class="action-button"
+	>
+		<Label class="hidden-on-mobile">{actionsConfig.addRecord.label}</Label>
+		<Icon class="material-icons action-icons mobile">add</Icon>
+	</Button>
+
+	<Group variant="raised">
 		<Button
-			on:click={actionsConfig.addRecord.handler}
-			aria-label={actionsConfig.addRecord.aria}
+			disabled={!showDeleteOption}
+			on:click={actionsConfig.delete.handler}
+			aria-label={actionsConfig.delete.aria}
 			variant="raised"
 			class="action-button"
 		>
-			<Label class="hidden-on-mobile">{actionsConfig.addRecord.label}</Label>
-			<Icon class="material-icons action-icons mobile">add</Icon>
+			<Label class="hidden-on-mobile hidden-on-landscape">{actionsConfig.delete.label}</Label>
+			<Icon class="material-icons action-icons mobile landscape">delete</Icon>
 		</Button>
 
-		<Group variant="raised">
+		<div use:GroupItem>
 			<Button
 				disabled={!showDeleteOption}
-				on:click={actionsConfig.delete.handler}
-				aria-label={actionsConfig.delete.aria}
+				on:click={() => menu.setOpen(true)}
 				variant="raised"
-				class="action-button"
+				class="button-group-dropdown"
 			>
-				<Label class="hidden-on-mobile hidden-on-landscape">{actionsConfig.delete.label}</Label>
-				<Icon class="material-icons action-icons mobile landscape">delete</Icon>
+				<Icon class="material-icons">arrow_drop_down</Icon>
 			</Button>
 
-			<div use:GroupItem>
-				<Button
-					disabled={!showDeleteOption}
-					on:click={() => menu.setOpen(true)}
-					variant="raised"
-					class="button-group-dropdown"
-				>
-					<Icon class="material-icons">arrow_drop_down</Icon>
-				</Button>
-
-				<Menu bind:this={menu} anchorCorner="TOP_LEFT">
-					<List>
-						<Item
-							disabled={!showDeleteOption}
-							on:SMUI:action={actionsConfig.delete.handler}
-							aria-label={actionsConfig.delete.aria}
-						>
-							<Text>{actionsConfig.delete.label}</Text>
-						</Item>
-						<Item
-							disabled={!showDeleteOption}
-							on:SMUI:action={actionsConfig.deleteAll.handler}
-							aria-label={actionsConfig.deleteAll.aria}
-						>
-							<Text>{actionsConfig.deleteAll.label}</Text>
-						</Item>
-					</List>
-				</Menu>
-			</div>
-		</Group>
-	</div>
+			<Menu bind:this={menu} anchorCorner="TOP_LEFT">
+				<List>
+					<Item
+						disabled={!showDeleteOption}
+						on:SMUI:action={actionsConfig.delete.handler}
+						aria-label={actionsConfig.delete.aria}
+					>
+						<Text>{actionsConfig.delete.label}</Text>
+					</Item>
+					<Item
+						disabled={!showDeleteOption}
+						on:SMUI:action={actionsConfig.deleteAll.handler}
+						aria-label={actionsConfig.deleteAll.aria}
+					>
+						<Text>{actionsConfig.deleteAll.label}</Text>
+					</Item>
+				</List>
+			</Menu>
+		</div>
+	</Group>
 </div>
 
 <Snackbar bind:this={snackbar} on:SMUISnackbar:closed={handleClosedStacked} leading>

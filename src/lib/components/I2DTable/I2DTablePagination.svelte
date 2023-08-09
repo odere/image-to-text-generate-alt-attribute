@@ -11,12 +11,6 @@
 		tableI2DState.setPageSize($tableI2DState.pageSizes[clickedItemIndex]);
 	};
 
-	$: {
-		if ($tableI2DState.data.length) {
-			console.log($tableI2DState.currentPage, $tableI2DState.lastPage);
-		}
-	}
-
 	$: paginationControlsConfig = [
 		{
 			handler: () => tableI2DState.gotoPage(0),
