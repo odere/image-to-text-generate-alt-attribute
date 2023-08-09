@@ -14,7 +14,7 @@
 	let snackbar: Snackbar;
 	let filterQuery = '';
 
-	$: showDeleteOption = $tableI2DState.selectedRows.length;
+	$: showDeleteOption = $tableI2DState.selectedRows.length && !$tableI2DState.action;
 	$: actionSelectedItems = $tableI2DState.action?.selectedRows || [];
 
 	const handleClosedStacked = () => {
@@ -148,7 +148,7 @@
 	</div>
 </div>
 
-<Snackbar bind:this={snackbar} on:SMUISnackbar:closed={handleClosedStacked}>
+<Snackbar bind:this={snackbar} on:SMUISnackbar:closed={handleClosedStacked} leading>
 	<SnackbarLabel>You have deleted {actionSelectedItems.length} items.</SnackbarLabel>
 	<SnackbarActions>
 		<Button action="undo" on:click={tableI2DState.undoAction}>Undo</Button>
