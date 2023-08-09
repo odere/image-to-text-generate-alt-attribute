@@ -32,35 +32,43 @@
 		tableI2DState.setPageSize(event.detail);
 	};
 
-	const onCheckboxChange = (event: CustomEvent<HTMLInputElement>) => {
-		const checkbox = event.target as HTMLInputElement;
+	const onCheckboxChange = (seldcgtedItems?: string[]) => {
+		const selectedRows = seldcgtedItems || selected;
+		const isIndeterminateState = selectedRows.length !== $tableI2DState.pageSize;
 
-		if (checkbox) {
-			const isIndeterminateState = selected.length !== $tableI2DState.pageSize;
-
-			if (isIndeterminateState) {
-				tableI2DState.update({
-					allSelected: null,
-					selectedRows: selected
-				});
-
-				return;
-			}
-
-			if (!selected.length) {
-				tableI2DState.update({
-					allSelected: false,
-					selectedRows: selected
-				});
-
-				return;
-			}
-
+		if (isIndeterminateState) {
 			tableI2DState.update({
-				allSelected: true,
-				selectedRows: selected
+				allSelected: null,
+				selectedRows
 			});
+
+			return;
 		}
+
+		if (!selected.length) {
+			tableI2DState.update({
+				allSelected: false,
+				selectedRows
+			});
+
+			return;
+		}
+
+		tableI2DState.update({
+			allSelected: true,
+			selectedRows
+		});
+	};
+
+	const onCheckClick = (itemID: string) => {
+		const item = selected.find((id) => id === itemID);
+
+		if (item) {
+			onCheckboxChange(selected.filter((id) => id !== itemID));
+			return;
+		}
+
+		onCheckboxChange([...selected, itemID]);
 	};
 
 	const onAllCheckboxChange = (event: CustomEvent<HTMLInputElement>) => {
@@ -85,15 +93,17 @@
 			});
 		}
 	};
+
+	const onSort = () => {
+		tableI2DState.sortPageItems(sort, sortDirection);
+	};
 </script>
 
 <DataTable
 	sortable
 	bind:sort
 	bind:sortDirection
-	on:SMUIDataTable:sorted={() => {
-		tableI2DState.sortPageItems(sort, sortDirection);
-	}}
+	on:SMUIDataTable:sorted={onSort}
 	table$aria-label="Image to description table"
 	class="full-width image-to-description-table"
 >
@@ -119,16 +129,16 @@
 	<Body>
 		{#each $tableI2DState.pageItems as item (item.id)}
 			<Row>
-				<Cell>
+				<Cell on:click={() => onCheckClick(item.id)}>
 					<Checkbox
 						bind:group={selected}
 						value={item.id}
-						valueKey={`${item.id}`}
-						on:change={onCheckboxChange}
+						valueKey={item.id}
+						on:change={() => onCheckboxChange()}
 					/>
 				</Cell>
 
-				<Cell>
+				<Cell on:click={() => onCheckClick(item.id)}>
 					<Image
 						class="image-preview"
 						src="https://placehold.co/64x64?text=square"
