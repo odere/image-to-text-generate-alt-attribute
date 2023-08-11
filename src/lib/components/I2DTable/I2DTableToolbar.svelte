@@ -13,6 +13,8 @@
 	let menu: Menu;
 	let snackbar: Snackbar;
 	let filterQuery = '';
+	// TODO: 2 enable search
+	const disableSearch = true;
 
 	$: showDeleteOption = $tableI2DState.selectedRows.length && !$tableI2DState.action;
 	$: actionSelectedItems = $tableI2DState.action?.selectedRows || [];
@@ -21,7 +23,7 @@
 		const action = $tableI2DState.action;
 
 		if (action) {
-			// TODO: make a call to permanent delete
+			// TODO: 1 make a call to permanent delete
 			tableI2DState.update({
 				action: undefined
 			});
@@ -70,26 +72,31 @@
 	};
 </script>
 
-<Paper class="filter-input" elevation={6}>
-	<Icon class="material-icons">search</Icon>
-	<Input
-		bind:value={filterQuery}
-		on:input={onInputChange}
-		placeholder="Search"
-		class="solo-input"
-	/>
-	<IconButton
-		class={classMap({
-			'material-icons': true,
-			'close-button': true,
-			hidden: !filterQuery
-		})}
-		on:click={onInputClear}
-		ripple={false}
-	>
-		close
-	</IconButton>
-</Paper>
+<div>
+	<!-- TODO: 2 enable search -->
+	{#if !disableSearch}
+		<Paper class="filter-input" elevation={6}>
+			<Icon class="material-icons">search</Icon>
+			<Input
+				bind:value={filterQuery}
+				on:input={onInputChange}
+				placeholder="Search"
+				class="solo-input"
+			/>
+			<IconButton
+				class={classMap({
+					'material-icons': true,
+					'close-button': true,
+					hidden: !filterQuery
+				})}
+				on:click={onInputClear}
+				ripple={false}
+			>
+				close
+			</IconButton>
+		</Paper>
+	{/if}
+</div>
 
 <div class="action-section">
 	<Button

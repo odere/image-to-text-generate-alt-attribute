@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { Data } from '$lib/api/fetch-data';
+import type { ImagePayload } from '$lib/types';
 import type { SortValue } from '@smui/data-table';
 
 export type PageSize = 10 | 25 | 50 | 100;
@@ -13,11 +13,11 @@ export interface TableState {
 	action?: Action;
 	allSelected: boolean | null;
 	currentPage: number;
-	data: Data[];
-	items: Data[];
+	data: ImagePayload[];
+	items: ImagePayload[];
 	lastPage: number;
 	pageEnd: number;
-	pageItems: Data[];
+	pageItems: ImagePayload[];
 	pageSize: PageSize;
 	pageSizes: PageSize[];
 	pageStart: number;
@@ -93,7 +93,7 @@ const createI2DTableState = () => {
 				};
 			}),
 		sortPageItems: (
-			propertyToSort: keyof Data,
+			propertyToSort: keyof ImagePayload,
 			sortDirection: Lowercase<keyof typeof SortValue> = 'ascending'
 		) =>
 			update((state) => {
@@ -137,7 +137,8 @@ const createI2DTableState = () => {
 					return state;
 				}
 
-				const items = data.filter((item) => item.title.includes(query));
+				// TODO: improve Filtering to be able to search by description, URL, tags
+				const items = data.filter((item) => item.url.includes(query));
 				const pageEnd = Math.min(pageStart + pageSize, items.length);
 				const lastPage = Math.max(Math.ceil(items.length / pageSize) - 1, 0);
 				const pageItems = items.slice(pageStart, pageEnd);

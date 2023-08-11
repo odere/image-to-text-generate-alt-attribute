@@ -1,18 +1,11 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { Row, Section } from '@smui/top-app-bar';
 
 	import I2DTable from '$lib/components/I2DTable/index.svelte';
 	import I2DTableToolbar from '$lib/components/I2DTable/I2DTableToolbar.svelte';
-	import { type Data, fetchData } from '$lib/api/fetch-data';
+	import type { Data } from '$lib/types';
 
-	let data: Data[] = [];
-	let fetching = false;
-
-	onMount(async () => {
-		data = await fetchData();
-		fetching = true;
-	});
+	export let data: Data;
 </script>
 
 <Row class="header-row table-toolbar">
@@ -21,10 +14,10 @@
 	</Section>
 </Row>
 
-<I2DTable {fetching} {data} />
+<I2DTable {data} />
 
 <style lang="scss">
-	@import '../lib/styles/breakpoints.scss';
+	@import '../../lib/styles/breakpoints.scss';
 
 	/* Override parent component styles */
 	:global(.main.main-container) {

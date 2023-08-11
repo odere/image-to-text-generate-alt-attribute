@@ -1,32 +1,31 @@
 <script lang="ts">
-	// TODO: Create modal to edit data
-	// TODO: Create new mock for data
 	import Checkbox from '@smui/checkbox';
-	import DataTable, { Head, Body, Row, Cell, SortValue } from '@smui/data-table';
-	import IconButton from '@smui/icon-button';
+	import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
 	import LinearProgress from '@smui/linear-progress';
 	import { Image } from '@smui/image-list';
-	import { Label as ButtonLabel } from '@smui/button';
+	import { onMount } from 'svelte';
 
-	import type { Data } from '$lib/api/fetch-data';
+	import type { Data, ImagePayload } from '$lib/types';
 
 	import I2DTablePagination from './I2DTablePagination.svelte';
-	import { tableI2DState, type PageSize } from './I2DTable.store';
+	import { tableI2DState } from './I2DTable.store';
 
-	export let data: Data[] = [];
-	export let fetching = false;
-
-	let sort: keyof Data = 'title';
-	let sortDirection: Lowercase<keyof typeof SortValue> = 'ascending';
+	export let data: Data;
+	export let fetched: boolean | undefined = false;
 
 	$: allSelected = $tableI2DState.allSelected;
 	$: selected = $tableI2DState.selectedRows;
 
-	$: {
-		if (data.length !== $tableI2DState.data.length && !$tableI2DState.action) {
-			tableI2DState.init({ data });
+	onMount(() => {
+		const { action, data: storeData } = $tableI2DState;
+		const { items = [], data: dataPayload = {} } = data || {};
+
+		if (items.length !== storeData.length && !action) {
+			tableI2DState.init({ data: items.map((id) => dataPayload[id]) as ImagePayload[] });
 		}
-	}
+
+		fetched = true;
+	});
 
 	const onCheckboxChange = (seldcgtedItems?: string[]) => {
 		const selectedRows = seldcgtedItems || selected;
@@ -89,24 +88,13 @@
 			});
 		}
 	};
-
-	const onSort = () => {
-		tableI2DState.sortPageItems(sort, sortDirection);
-	};
 </script>
 
 <div class="root">
-	<DataTable
-		sortable
-		bind:sort
-		bind:sortDirection
-		on:SMUIDataTable:sorted={onSort}
-		table$aria-label="Image to description table"
-		class="content-max-width i2d-table"
-	>
+	<DataTable table$aria-label="Image to description table" class="content-max-width i2d-table">
 		<Head>
 			<Row>
-				<Cell>
+				<Cell sortable={false}>
 					<Checkbox
 						on:change={onAllCheckboxChange}
 						bind:checked={allSelected}
@@ -114,12 +102,13 @@
 					/>
 				</Cell>
 
+				<Cell columnId="id">ID</Cell>
+
 				<Cell sortable={false}>Preview</Cell>
 
-				<Cell columnId="title" class="full-width">
-					<ButtonLabel>URL</ButtonLabel>
-					<IconButton class="material-icons">arrow_upward</IconButton>
-				</Cell>
+				<Cell columnId="corrected_description">Description</Cell>
+
+				<Cell columnId="url">URL</Cell>
 			</Row>
 		</Head>
 
@@ -136,15 +125,23 @@
 					</Cell>
 
 					<Cell on:click={() => onCheckClick(item.id)}>
+						{item.id}
+					</Cell>
+
+					<Cell>
 						<Image
 							class="image-preview"
-							src="https://placehold.co/64x64?text=square"
+							src={item.url || 'https://placehold.co/64x64?text=square'}
 							alt="Image placeholder"
 						/>
 					</Cell>
 
 					<Cell class="full-width long-text-cell">
-						{item.id} -- {item.title} https://shared.cdn.smp.schibsted.com/v2/images/02f62bd3-4a13-4c79-b718-0b75a2f611b0?fit=crop&h=1425&w=1900&s=f4d7a442348f73d8085928d2a9caa7ee7ad1002b
+						{item.corrected_description}
+					</Cell>
+
+					<Cell class="url-cell long-text-cell">
+						{item.url}
 					</Cell>
 				</Row>
 			{/each}
@@ -154,7 +151,7 @@
 			slot="progress"
 			indeterminate
 			aria-label="Data is being loaded..."
-			bind:closed={fetching}
+			bind:closed={fetched}
 		/>
 
 		<I2DTablePagination slot="paginate" />
@@ -177,6 +174,7 @@
 
 	:global(.image-preview) {
 		width: auto;
+		height: 64px;
 		display: inherit;
 		margin: var(--gap) 0;
 	}
@@ -185,7 +183,14 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		max-width: 100px;
+	}
+
+	:global(tbodY) {
+		max-width: calc(100vw - var(--gap-medium) * 2);
+	}
+
+	:global(.url-cell) {
+		max-width: 35vw;
 	}
 
 	@media only screen and (max-width: calc($mobileBreakpoint - 1px)) {
