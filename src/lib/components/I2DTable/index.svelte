@@ -91,7 +91,7 @@
 </script>
 
 <div class="root">
-	<DataTable table$aria-label="Image to description table" class="content-max-width i2d-table">
+	<DataTable table$aria-label="Image to description table" class="i2d-table">
 		<Head>
 			<Row>
 				<Cell sortable={false}>
@@ -168,7 +168,7 @@
 		max-height: calc(100vh - var(--gap-medium) - (var(--navigation-header-height) * 2));
 
 		:global(.i2d-table) {
-			width: calc(100% - var(--gap-medium) * 2);
+			width: 100%;
 		}
 	}
 

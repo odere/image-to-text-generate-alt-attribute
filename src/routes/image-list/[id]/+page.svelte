@@ -7,3 +7,4 @@
 <p>{data.corrected_description}</p>
 <p>{data.seo_enchanced_description}</p>
 <p>{data.promotional_enchanced_description}</p>
+«

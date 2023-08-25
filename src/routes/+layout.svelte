@@ -14,6 +14,9 @@
 			<Button color="primary" href="/">
 				<Label>Image list</Label>
 			</Button>
+			<Button color="primary" href="/demo">
+				<Label>Demo</Label>
+			</Button>
 			<Button color="primary" href="/about">
 				<Label>About</Label>
 			</Button>
@@ -28,11 +31,10 @@
 <style lang="scss">
 	:global(.main.main-container) {
 		background-color: var(--background);
-		padding: var(--gap-medium);
+		padding-top: var(--navigation-header-height);
 		margin-top: var(--navigation-header-height);
 		box-sizing: border-box;
 		height: calc(100vh - var(--navigation-header-height));
-		overflow: auto;
 	}
 
 	:global(.header-row) {

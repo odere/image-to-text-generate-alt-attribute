@@ -19,16 +19,6 @@
 <style lang="scss">
 	@import '../../lib/styles/breakpoints.scss';
 
-	/* Override parent component styles */
-	:global(.main.main-container) {
-		height: unset;
-		overflow: unset;
-		max-width: unset;
-		margin: 0;
-		padding: 0;
-		padding-top: var(--navigation-header-height);
-	}
-
 	:global(.header-toolbar-section) {
 		display: flex;
 		gap: var(--gap-medium);
@@ -38,12 +28,14 @@
 	}
 
 	:global(.table-toolbar) {
+		background-color: var(--background);
+		left: 50%;
+		padding: var(--gap-small) var(--gap-medium);
 		position: fixed;
 		top: var(--navigation-header-height);
-		z-index: 100;
-		background-color: var(--background);
-		padding: var(--gap-small) var(--gap-medium);
+		transform: translateX(-50%);
 		width: 100%;
+		z-index: 100;
 
 		:global(.mobile) {
 			display: none;
