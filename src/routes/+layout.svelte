@@ -31,9 +31,9 @@
 <style lang="scss">
 	:global(.main.main-container) {
 		background-color: var(--background);
-		padding-top: var(--navigation-header-height);
-		margin-top: var(--navigation-header-height);
-		box-sizing: border-box;
+		padding-top: 0;
+		position: relative;
+		top: var(--navigation-header-height);
 		height: calc(100vh - var(--navigation-header-height));
 	}
 

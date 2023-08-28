@@ -165,7 +165,7 @@
 		display: flex;
 		justify-content: center;
 		margin-top: var(--navigation-header-height);
-		max-height: calc(100vh - var(--gap-medium) - (var(--navigation-header-height) * 2));
+		max-height: calc(100vh - (var(--navigation-header-height) * 2));
 
 		:global(.i2d-table) {
 			width: 100%;

@@ -1,29 +1,36 @@
 <script lang="ts">
-	import Textfield from '@smui/textfield';
-	let valueTypeFiles: FileList | null = null;
+	import DDImageInput from '$lib/components/DDImageInput.svelte';
 
-	// Note: the change and input events fire before the `files` prop is updated.
-	$: if (valueTypeFiles != null && valueTypeFiles.length) {
-		alert('Selected ' + valueTypeFiles.length + ' file(s).');
-	}
+	let selectedImage: File | null = null;
+
+	const downloadImage = () => {
+		if (selectedImage) {
+			const link = document.createElement('a');
+			link.href = URL.createObjectURL(selectedImage);
+			link.download = selectedImage.name;
+			link.click();
+		}
+	};
+
+	const onImageChangeHandler = (image: File | null) => {
+		selectedImage = image;
+	};
 </script>
 
-<h1>Demo</h1>
+<div class="root">
+	<h1>Demo</h1>
 
-<div class="hide-file-ui">
-	<!--
-    Note: the change and input events fire
-    before the `files` prop is updated.
-  -->
-	<Textfield bind:files={valueTypeFiles} label="File" type="file" />
+	<button on:click={downloadImage}>Download Image</button>
+
+	<DDImageInput onChange={onImageChangeHandler} />
 </div>
 
 <style>
-	.hide-file-ui :global(input[type='file']::file-selector-button) {
-		display: none;
+	.root {
+		padding: 8px;
 	}
 
-	.hide-file-ui :global(:not(.mdc-text-field--label-floating) input[type='file']) {
-		color: transparent;
+	:global(.main.main-container) {
+		overflow: auto;
 	}
 </style>
